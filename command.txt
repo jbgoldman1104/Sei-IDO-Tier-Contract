@@ -1,0 +1,6 @@
+
+**************BEGIN**********************
+seid tx wasm store release/tier.wasm --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas auto --gas-adjustment 1.5 --gas-prices 50usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'
+------------------------------------------
+DC3073890DCA71CEF5AE1AFC8484D85716D5B93F0AB2112993530F7D4BBEF033
+*************END*************************
