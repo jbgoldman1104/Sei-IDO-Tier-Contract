@@ -1,6 +1,11 @@
 
 **************BEGIN**********************
-seid tx wasm store release/tier.wasm --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas auto --gas-adjustment 1.5 --gas-prices 50usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'
+seid tx wasm instantiate 2152 '{"validator":"'sei183xtf2wmcah9fh5kpdr47wlspv3w47c0lgvwvf'", "admin":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'", "deposits":["300","200","100","50","20","10","5","1"]}' --admin sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y --label "TierContract" --output json | jq -r '.txhash'
 ------------------------------------------
-DC3073890DCA71CEF5AE1AFC8484D85716D5B93F0AB2112993530F7D4BBEF033
+D04C801B213ADF95862CEB58A5BAF09EB6824F42A0CC3950FB69DA21C196991B
+*************END*************************
+**************BEGIN**********************
+seid query tx D04C801B213ADF95862CEB58A5BAF09EB6824F42A0CC3950FB69DA21C196991B --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --output json | jq -r '.logs[0].events[0].attributes[0].value'
+------------------------------------------
+sei1ahqvztzmhzdkdm0xhush3eupjtddj7df7ah2trqm4s24u263jqms6df5r9
 *************END*************************
