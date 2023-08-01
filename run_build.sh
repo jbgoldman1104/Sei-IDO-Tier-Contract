@@ -28,6 +28,11 @@ echo "seid keys show $OWNER -a --keyring-backend test"
 echo "" > /root/Sei-IDO-Tier-Contract/command.txt
 
 case $NETWORK in
+    localnet)
+        NODE="http://localhost:26657"
+        DENOM="usei"
+        CHAIN_ID="testchain-1"
+        ;;
     testnet)
         NODE="https://rpc.atlantic-2.seinetwork.io:443"
         DENOM="usei"
@@ -41,7 +46,8 @@ case $NETWORK in
 esac
 
 NODECHAIN="--node $NODE --chain-id $CHAIN_ID"
-TXFLAG="$NODECHAIN --gas auto --gas-adjustment 1.5 --gas-prices 50usei --broadcast-mode block --keyring-backend test -y"
+#TXFLAG="$NODECHAIN --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y"
+TXFLAG="$NODECHAIN --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y"
 
 CreateEnv() {
     apt update
@@ -111,7 +117,7 @@ Upload() {
     CATEGORY=$1
     echo "================================================="
     echo "Upload Wasm for $CATEGORY"
-    Execute "seid tx wasm store release/$CATEGORY".wasm" $WALLET $TXFLAG --output json | jq -r '.txhash'"
+    Execute "seid tx wasm store release/$CATEGORY".wasm" $WALLET $NODECHAIN --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'"
     UPLOADTX=$RETURN
 
     echo "Upload txHash: "$UPLOADTX
@@ -140,7 +146,7 @@ InstantiateTier() {
 
     echo "Code id: " $CODE_ID
 
-    Execute "seid tx wasm instantiate $CODE_ID '{\"validator\":\"'$VALIDATOR'\"}' --admin $ADDR_OWNER $WALLET $TXFLAG --output json | jq -r '.txhash'"
+    Execute "seid tx wasm instantiate $CODE_ID '{\"validator\":\"'$VALIDATOR'\", \"admin\":\"'$ADDR_OWNER'\", \"deposits\":[\"300\",\"200\",\"100\",\"50\",\"20\",\"10\",\"5\",\"1\"]}' --admin $ADDR_OWNER $WALLET $TXFLAG --label \"TierContract\" --output json | jq -r '.txhash'"
     TXHASH=$RETURN
 
     echo "Transaction hash = $TXHASH"
@@ -210,6 +216,13 @@ DeployCW20TokenFactory() {
     
 } 
 
+Optimize() {
+    CATEGORY=$1
+    
+    Execute "docker run --rm -v ./$CATEGORY   --mount type=volume,source=/root/cache/$CATEGORY,target=/target/$CATEGORY   --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry   cosmwasm/rust-optimizer:0.12.11"
+
+    
+}
 
 # InstantiateCW20
 
@@ -217,9 +230,13 @@ DeployCW20TokenFactory() {
 # DeployCW20Stake
 # DeployCW20TokenFactory
 # TokenTransfer $1
+
 # PrintWalletBalance
 
-Upload tier
+# RustBuild tier
+# Optimize tier
+# Upload tier
+InstantiateTier
 # DeployTier
 
-# CreateNewToken
+#CreateNewToken

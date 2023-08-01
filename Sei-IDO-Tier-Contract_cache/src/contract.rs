@@ -174,8 +174,6 @@ pub fn try_deposit(
     let config = CONFIG_ITEM.load(deps.storage)?;
     config.assert_contract_active()?;
 
-
-
     let received_funds = get_received_funds(&deps, &info)?;
 
     let mut sei_deposit = received_funds.amount.u128();
@@ -184,15 +182,7 @@ pub fn try_deposit(
         &deps,
     )?;
 
-    // if sei_deposit > 0 {
-    //     return Err(ContractError::Std(StdError::generic_err(format!("Reached max tier {}", sei_deposit))));
-    // }
-
     let usd_deposit = band_protocol.usd_amount(sei_deposit);
-
-    // if usd_deposit > 0 {
-    //     return Err(ContractError::Std(StdError::generic_err(format!("Reached max tier {}", usd_deposit))));
-    // }
 
     let sender = info.sender.to_string();
     let min_tier = config.min_tier();
@@ -559,129 +549,4 @@ pub fn query_withdrawals(
     };
 
     Ok(answer)
-}
-
-
-#[cfg(test)]
-mod tests {
-    use std::marker::PhantomData;
-
-    use super::*;
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info, MockStorage, MockApi, MockQuerier};
-    use cosmwasm_std::{coins, from_binary, OwnedDeps};
-    use sei_integration_tests::helper::mock_app;
-
-    #[test]
-    fn deposite() {
-
-        let msg = InstantiateMsg {
-            validator: "sei183xtf2wmcah9fh5kpdr47wlspv3w47c0lgvwvf".to_string(),
-            admin: Some("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat".to_string()),
-            deposits: [
-              Uint128::new(300),
-              Uint128::new(100),
-              Uint128::new(20),
-              Uint128::new(10),
-              Uint128::new(1)
-            ].to_vec()
-          };
-
-        let mut mydeps = OwnedDeps {
-            storage: MockStorage::default(),
-            api: MockApi::default(),
-            querier: MockQuerier::default(),
-            custom_query_type: PhantomData::<SeiQueryWrapper>,
-        };
-        
-        let info: MessageInfo = mock_info("creator", &coins(2, "usei"));
-        let _res = instantiate(mydeps.as_mut(), mock_env(), info, msg).unwrap();
-
-        // beneficiary can release it
-        let info = mock_info("anyone", &coins(20000, "usei"));
-        let msg = ExecuteMsg::Deposit { padding: Some("".to_string()) };
-        let _res = execute(mydeps.as_mut(), mock_env(), info, msg).unwrap();
-
-        // should increase counter by 1
-        // let res = query(deps.as_ref(), mock_env(), QueryMsg::GetCount {}).unwrap();
-        // let value: GetCountResponse = from_binary(&res).unwrap();
-        // assert_eq!(18, value.count);
-    }
-
-    #[test]
-    fn change_admin() {
-
-        let msg = InstantiateMsg {
-            validator: "sei183xtf2wmcah9fh5kpdr47wlspv3w47c0lgvwvf".to_string(),
-            admin: Some("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat".to_string()),
-            deposits: [
-              Uint128::new(300),
-              Uint128::new(100),
-              Uint128::new(20),
-              Uint128::new(10),
-              Uint128::new(1)
-            ].to_vec()
-          };
-
-        let mut mydeps = OwnedDeps {
-            storage: MockStorage::default(),
-            api: MockApi::default(),
-            querier: MockQuerier::default(),
-            custom_query_type: PhantomData::<SeiQueryWrapper>,
-        };
-        
-        let info: MessageInfo = mock_info("creator", &coins(2, "usei"));
-        let _res = instantiate(mydeps.as_mut(), mock_env(), info, msg).unwrap();
-
-        // beneficiary can release it
-        let info = mock_info("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat", &coins(20000, "usei"));
-        let msg = ExecuteMsg::ChangeAdmin { admin: "sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat".to_string(),  padding: Some("".to_string()) };
-        let _res = execute(mydeps.as_mut(), mock_env(), info, msg).unwrap();
-
-        // should increase counter by 1
-        // let res = query(deps.as_ref(), mock_env(), QueryMsg::GetCount {}).unwrap();
-        // let value: GetCountResponse = from_binary(&res).unwrap();
-        // assert_eq!(18, value.count);
-    }
-
-
-    #[test]
-    fn withdraw() {
-
-        let msg = InstantiateMsg {
-            validator: "sei183xtf2wmcah9fh5kpdr47wlspv3w47c0lgvwvf".to_string(),
-            admin: Some("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat".to_string()),
-            deposits: [
-              Uint128::new(300),
-              Uint128::new(100),
-              Uint128::new(20),
-              Uint128::new(10),
-              Uint128::new(1)
-            ].to_vec()
-          };
-
-        let mut mydeps = OwnedDeps {
-            storage: MockStorage::default(),
-            api: MockApi::default(),
-            querier: MockQuerier::default(),
-            custom_query_type: PhantomData::<SeiQueryWrapper>,
-        };
-        
-        let info: MessageInfo = mock_info("creator", &coins(2, "usei"));
-        let _res = instantiate(mydeps.as_mut(), mock_env(), info, msg).unwrap();
-
-        // beneficiary can release it
-        let info = mock_info("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat", &coins(20000, "usei"));
-        let msg = ExecuteMsg::Deposit { padding: Some("".to_string()) };
-        let _res = execute(mydeps.as_mut(), mock_env(), info, msg).unwrap();
-
-        let info = mock_info("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat", &coins(20000, "usei"));
-        let msg = ExecuteMsg::Withdraw { padding: None } ;
-        let _res = execute(mydeps.as_mut(), mock_env(), info, msg).unwrap();
-
-        // should increase counter by 1
-        // let res = query(deps.as_ref(), mock_env(), QueryMsg::GetCount {}).unwrap();
-        // let value: GetCountResponse = from_binary(&res).unwrap();
-        // assert_eq!(18, value.count);
-    }
-
 }

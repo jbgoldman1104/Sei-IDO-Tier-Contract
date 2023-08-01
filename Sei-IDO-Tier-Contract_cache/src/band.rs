@@ -1,7 +1,7 @@
-use cosmwasm_std::{ Querier, StdResult, Uint128, Decimal, StdError, Uint64};
+use cosmwasm_std::{ Querier, StdResult, Uint128, Decimal};
 
 use serde::{Deserialize, Serialize};
-use sei_cosmwasm::{SeiQuerier, ExchangeRatesResponse, SeiQueryWrapper, DenomOracleExchangeRatePair, OracleExchangeRate};
+use sei_cosmwasm::{SeiQuerier, ExchangeRatesResponse, SeiQueryWrapper};
 use cosmwasm_std::DepsMut;
 
 
@@ -21,11 +21,8 @@ impl BandProtocol {
 
     pub fn new(deps: &DepsMut<SeiQueryWrapper>) -> StdResult<Self> {
 
-        let querier: SeiQuerier<'_> = SeiQuerier::new(&deps.querier);
-        let res = querier.query_exchange_rates().unwrap_or(ExchangeRatesResponse { denom_oracle_exchange_rate_pairs: vec![
-        ], });
-        
-        
+        let querier = SeiQuerier::new(&deps.querier);
+        let res = querier.query_exchange_rates()?;
         let mut sei_per_usd = Self::ONE_USD / 2;
         for exratepair in res.denom_oracle_exchange_rate_pairs {
             if exratepair.denom.clone() == "usei" {

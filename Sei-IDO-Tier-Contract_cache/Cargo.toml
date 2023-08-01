@@ -48,7 +48,6 @@ schemars = "0.8.8"
 serde = { version = "1.0.137", default-features = false, features = ["derive"] }
 thiserror = { version = "1.0.31" }
 sei-cosmwasm = { version = "0.4.10" }
-sei-integration-tests = "0.4.10"
 
 [dev-dependencies]
 cw-multi-test = "0.16.2"
