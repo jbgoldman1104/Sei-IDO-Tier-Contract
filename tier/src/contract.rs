@@ -1,8 +1,6 @@
-use std::env;
-
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, Coin, BankMsg, coins, CosmosMsg,  coin, Uint128, SubMsg};
+use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Coin, BankMsg, coins, CosmosMsg,  coin, Uint128, SubMsg};
 
 use cosmwasm_std::StakingMsg;
 use cosmwasm_std::DistributionMsg;
@@ -17,10 +15,6 @@ use crate::state::{Config, CONFIG_ITEM, WITHDRAWALS_LIST, self, USER_INFOS, User
 use crate::utils;
 use cosmwasm_std::StdError;
 
-// version info for migration info
-const CONTRACT_NAME: &str = "crates.io:tier";
-const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
-const INSTANTIATE_REPLY_ID: u64 = 1;
 
 pub const BLOCK_SIZE: usize = 256;
 pub const UNBOUND_LATENCY: u64 = 21 * 24 * 60 * 60;
@@ -30,7 +24,7 @@ pub const USEI: &str = "usei";
 pub fn instantiate(
     deps: DepsMut<SeiQueryWrapper>,
     _env: Env,
-    info: MessageInfo,
+    _info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
     let deposits = msg.deposits.iter().map(|v| v.u128()).collect::<Vec<_>>();
@@ -98,18 +92,18 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
             address,
             start,
             limit,
-        } => (to_binary(&query_withdrawals(deps, address, start, limit)?)),
+        } => to_binary(&query_withdrawals(deps, address, start, limit)?),
     }
 }
 
 pub fn try_change_admin(
     deps: DepsMut<SeiQueryWrapper>,
-    env: Env,
+    _env: Env,
     info: MessageInfo,
     new_admin: String,
 ) -> Result<Response, ContractError> {
-    let mut config: Config = CONFIG_ITEM.load(deps.storage)?;
-    if ( info.sender.clone() != config.admin) {
+    let config: Config = CONFIG_ITEM.load(deps.storage)?;
+    if  info.sender.clone() != config.admin {
         return Err(ContractError::Std(StdError::generic_err("Unauthorized")));
     }
     
@@ -125,12 +119,12 @@ pub fn try_change_admin(
 
 pub fn try_change_status(
     deps: DepsMut<SeiQueryWrapper>,
-    env: Env,
+    _env: Env,
     info: MessageInfo,
     status: ContractStatus,
 ) -> Result<Response, ContractError> {
-    let mut config: Config = CONFIG_ITEM.load(deps.storage)?;
-    if ( info.sender.clone() != config.admin) {
+    let config: Config = CONFIG_ITEM.load(deps.storage)?;
+    if  info.sender.clone() != config.admin {
         return Err(ContractError::Std(StdError::generic_err("Unauthorized")));
     }
     
@@ -141,7 +135,7 @@ pub fn try_change_status(
     Ok(Response::new().add_attribute("action", "changed status"))
 }
 
-pub fn get_received_funds(deps: &DepsMut<SeiQueryWrapper>, info: &MessageInfo) -> Result<Coin, ContractError> {
+pub fn get_received_funds(_deps: &DepsMut<SeiQueryWrapper>, info: &MessageInfo) -> Result<Coin, ContractError> {
     
     match info.funds.get(0) {
         None => { return Err(ContractError::Std(StdError::generic_err("No Funds"))) }
@@ -399,7 +393,7 @@ pub fn try_withdraw_rewards(
     deps: DepsMut<SeiQueryWrapper>,
     env: Env,
     info: MessageInfo,
-    recipient: Option<String>,
+    _recipient: Option<String>,
 ) -> Result<Response, ContractError> {
     
     let config: Config = CONFIG_ITEM.load(deps.storage)?;
@@ -419,8 +413,8 @@ pub fn try_withdraw_rewards(
         return Err(ContractError::Std(StdError::generic_err("There is nothing to withdraw")));
     }
 
-    let admin = config.admin;
-    let recipient = recipient.unwrap_or(admin);
+    // let admin = config.admin;
+    // let recipient = recipient.unwrap_or(admin);
     let withdraw_msg = DistributionMsg::WithdrawDelegatorReward {
         validator,
     };
@@ -442,7 +436,7 @@ pub fn try_redelegate(
     recipient: Option<String>,
 ) -> Result<Response, ContractError> {
     let mut config: Config = CONFIG_ITEM.load(deps.storage)?;
-    if ( info.sender.clone() != config.admin) {
+    if info.sender.clone() != config.admin {
         return Err(ContractError::Std(StdError::generic_err("Unauthorized")));
     }
 
@@ -480,7 +474,7 @@ pub fn try_redelegate(
     let mut messages = Vec::with_capacity(2);
     if can_withdraw != 0 {
         let admin = config.admin;
-        let recipient = recipient.unwrap_or(admin);
+        let _recipient = recipient.unwrap_or(admin);
         let withdraw_msg = DistributionMsg::WithdrawDelegatorReward {
             validator:old_validator.clone(),
         };
@@ -567,9 +561,8 @@ mod tests {
     use std::marker::PhantomData;
 
     use super::*;
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info, MockStorage, MockApi, MockQuerier};
-    use cosmwasm_std::{coins, from_binary, OwnedDeps};
-    use sei_integration_tests::helper::mock_app;
+    use cosmwasm_std::testing::{ mock_env, mock_info, MockStorage, MockApi, MockQuerier};
+    use cosmwasm_std::{coins,  OwnedDeps};
 
     #[test]
     fn deposite() {

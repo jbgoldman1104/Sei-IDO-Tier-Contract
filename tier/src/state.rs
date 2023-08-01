@@ -1,6 +1,6 @@
 use crate::msg::{ContractStatus, QueryResponse, SerializedWithdrawals};
 use cosmwasm_std::{
-    Api, CanonicalAddr, Addr,  StdError, StdResult, Storage, Uint128,
+      StdError, StdResult, Storage, Uint128,
 };
 use cw_storage_plus::{ Item, Map};
 use serde::{Deserialize, Serialize};

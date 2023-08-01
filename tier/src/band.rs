@@ -1,15 +1,7 @@
-use cosmwasm_std::{ Querier, StdResult, Uint128, Decimal, StdError, Uint64};
+use cosmwasm_std::{  StdResult,Decimal};
 
-use serde::{Deserialize, Serialize};
-use sei_cosmwasm::{SeiQuerier, ExchangeRatesResponse, SeiQueryWrapper, DenomOracleExchangeRatePair, OracleExchangeRate};
+use sei_cosmwasm::{SeiQuerier, ExchangeRatesResponse, SeiQueryWrapper};
 use cosmwasm_std::DepsMut;
-
-
-#[derive(Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct QueryAnswer {
-    rate: Uint128,
-}
 
 pub struct BandProtocol {
     sei_per_usd: u128 ,

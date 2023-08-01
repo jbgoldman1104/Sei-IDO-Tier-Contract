@@ -1,8 +1,7 @@
-use crate::{state::CONFIG_ITEM};
-use crate::{contract::USEI, state::Config};
+
+use crate::contract::USEI;
 use cosmwasm_std::{
-    Api, Coin, Empty, Env, FullDelegation, Querier, QueryRequest, StakingQuery,
-    StdError, StdResult, DepsMut, Addr,
+     Coin,  Env, FullDelegation, StdResult, DepsMut, Addr,
 };
 use sei_cosmwasm::SeiQueryWrapper;
 use serde::Deserialize;
@@ -12,7 +11,7 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
 struct FixedDelegationResponse {
-    pub delegation: Option<FixedFullDelegation>,
+    pub _delegation: Option<FixedFullDelegation>,
 }
 
 #[derive(Debug, Deserialize)]
