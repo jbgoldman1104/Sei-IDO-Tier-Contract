@@ -93,7 +93,7 @@ impl UserInfo {
             tier: self.tier,
             timestamp: self.timestamp,
             usd_deposit: Uint128::from(self.usd_deposit),
-            scrt_deposit: Uint128::from(self.sei_deposit),
+            sei_deposit: Uint128::from(self.sei_deposit),
         }
     }
 }

@@ -139,7 +139,7 @@ pub enum QueryResponse {
         tier: u8,
         timestamp: u64,
         usd_deposit: Uint128,
-        scrt_deposit: Uint128,
+        sei_deposit: Uint128,
     },
     Withdrawals {
         amount: u32,
