@@ -15,7 +15,7 @@ RETURN=""
 TOKEN="HEART"
 
 ADDR_OWNER=$(seid keys show $OWNER -a --keyring-backend test)
-VALIDATOR="sei183xtf2wmcah9fh5kpdr47wlspv3w47c0lgvwvf"
+VALIDATOR="seivaloper183xtf2wmcah9fh5kpdr47wlspv3w47c0p8aqde"
 
 echo "OWNER = $ADDR_OWNER" 
 WALLET="--from $OWNER"
@@ -117,7 +117,7 @@ Upload() {
     CATEGORY=$1
     echo "================================================="
     echo "Upload Wasm for $CATEGORY"
-    Execute "seid tx wasm store release/$CATEGORY".wasm" $WALLET $NODECHAIN --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'"
+    Execute "seid tx wasm store release/$CATEGORY".wasm" $WALLET $NODECHAIN --gas=2500000 --fees=2500000usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'"
     UPLOADTX=$RETURN
 
     echo "Upload txHash: "$UPLOADTX
@@ -146,7 +146,7 @@ InstantiateTier() {
 
     echo "Code id: " $CODE_ID
 
-    Execute "seid tx wasm instantiate $CODE_ID '{\"validator\":\"'$VALIDATOR'\", \"admin\":\"'$ADDR_OWNER'\", \"deposits\":[\"300\",\"200\",\"100\",\"50\",\"20\",\"10\",\"5\",\"1\"]}' --admin $ADDR_OWNER $WALLET $TXFLAG --label \"TierContract\" --output json | jq -r '.txhash'"
+    Execute "seid tx wasm instantiate $CODE_ID '{\"validator\":\"'$VALIDATOR'\", \"admin\":\"'$ADDR_OWNER'\", \"deposits\":[\"300\",\"100\",\"50\",\"10\",\"1\"]}' --admin $ADDR_OWNER $WALLET $TXFLAG --label \"TierContract\" --output json | jq -r '.txhash'"
     TXHASH=$RETURN
 
     echo "Transaction hash = $TXHASH"

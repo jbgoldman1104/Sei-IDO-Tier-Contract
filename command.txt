@@ -1,11 +1,11 @@
 
 **************BEGIN**********************
-seid tx wasm instantiate 2152 '{"validator":"'sei183xtf2wmcah9fh5kpdr47wlspv3w47c0lgvwvf'", "admin":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'", "deposits":["300","200","100","50","20","10","5","1"]}' --admin sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y --label "TierContract" --output json | jq -r '.txhash'
+seid tx wasm instantiate 2169 '{"validator":"'seivaloper183xtf2wmcah9fh5kpdr47wlspv3w47c0p8aqde'", "admin":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'", "deposits":["300","100","50","10","1"]}' --admin sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y --label "TierContract" --output json | jq -r '.txhash'
 ------------------------------------------
-D04C801B213ADF95862CEB58A5BAF09EB6824F42A0CC3950FB69DA21C196991B
+BF0F95593FA231D91539DE9ED0994D60555CE0A68D7E66FC958F501C0ACF56BE
 *************END*************************
 **************BEGIN**********************
-seid query tx D04C801B213ADF95862CEB58A5BAF09EB6824F42A0CC3950FB69DA21C196991B --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --output json | jq -r '.logs[0].events[0].attributes[0].value'
+seid query tx BF0F95593FA231D91539DE9ED0994D60555CE0A68D7E66FC958F501C0ACF56BE --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --output json | jq -r '.logs[0].events[0].attributes[0].value'
 ------------------------------------------
-sei1ahqvztzmhzdkdm0xhush3eupjtddj7df7ah2trqm4s24u263jqms6df5r9
+sei1hse0m60gkw04uzf7w2e6xkzvgwn965k07ux3e6aru8mpdpdy225qyd5v55
 *************END*************************

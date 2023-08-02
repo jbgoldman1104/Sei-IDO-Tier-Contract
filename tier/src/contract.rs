@@ -178,15 +178,7 @@ pub fn try_deposit(
         &deps,
     )?;
 
-    // if sei_deposit > 0 {
-    //     return Err(ContractError::Std(StdError::generic_err(format!("Reached max tier {}", sei_deposit))));
-    // }
-
     let usd_deposit = band_protocol.usd_amount(sei_deposit);
-
-    // if usd_deposit > 0 {
-    //     return Err(ContractError::Std(StdError::generic_err(format!("Reached max tier {}", usd_deposit))));
-    // }
 
     let sender = info.sender.to_string();
     let min_tier = config.min_tier();
@@ -590,14 +582,10 @@ mod tests {
         let _res = instantiate(mydeps.as_mut(), mock_env(), info, msg).unwrap();
 
         // beneficiary can release it
-        let info = mock_info("anyone", &coins(20000, "usei"));
+        let info = mock_info("anyone", &coins(200000, "usei"));
         let msg = ExecuteMsg::Deposit { padding: Some("".to_string()) };
         let _res = execute(mydeps.as_mut(), mock_env(), info, msg).unwrap();
 
-        // should increase counter by 1
-        // let res = query(deps.as_ref(), mock_env(), QueryMsg::GetCount {}).unwrap();
-        // let value: GetCountResponse = from_binary(&res).unwrap();
-        // assert_eq!(18, value.count);
     }
 
     #[test]
@@ -630,10 +618,6 @@ mod tests {
         let msg = ExecuteMsg::ChangeAdmin { admin: "sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat".to_string(),  padding: Some("".to_string()) };
         let _res = execute(mydeps.as_mut(), mock_env(), info, msg).unwrap();
 
-        // should increase counter by 1
-        // let res = query(deps.as_ref(), mock_env(), QueryMsg::GetCount {}).unwrap();
-        // let value: GetCountResponse = from_binary(&res).unwrap();
-        // assert_eq!(18, value.count);
     }
 
 
@@ -663,18 +647,14 @@ mod tests {
         let _res = instantiate(mydeps.as_mut(), mock_env(), info, msg).unwrap();
 
         // beneficiary can release it
-        let info = mock_info("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat", &coins(20000, "usei"));
-        let msg = ExecuteMsg::Deposit { padding: Some("".to_string()) };
+        let info = mock_info("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat", &coins(20000000, "usei"));
+        let msg = ExecuteMsg::Deposit { padding: None };
         let _res = execute(mydeps.as_mut(), mock_env(), info, msg).unwrap();
 
-        let info = mock_info("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat", &coins(20000, "usei"));
+        let info = mock_info("sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat", &coins(20000000, "usei"));
         let msg = ExecuteMsg::Withdraw { padding: None } ;
         let _res = execute(mydeps.as_mut(), mock_env(), info, msg).unwrap();
 
-        // should increase counter by 1
-        // let res = query(deps.as_ref(), mock_env(), QueryMsg::GetCount {}).unwrap();
-        // let value: GetCountResponse = from_binary(&res).unwrap();
-        // assert_eq!(18, value.count);
     }
 
 }
