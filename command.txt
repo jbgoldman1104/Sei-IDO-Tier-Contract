@@ -1,11 +1,11 @@
 
 **************BEGIN**********************
-seid tx wasm instantiate 2169 '{"validator":"'seivaloper183xtf2wmcah9fh5kpdr47wlspv3w47c0p8aqde'", "admin":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'", "deposits":["300","100","50","10","1"]}' --admin sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y --label "TierContract" --output json | jq -r '.txhash'
+seid tx wasm instantiate 2226 '{"name":"KAND","symbol":"KAND","decimals":6,"initial_balances":[{"address":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'","amount":"10000000000"}],"mint":{"minter":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'"},"marketing":{"marketing":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'","logo":{"url":""}}}' --label "HOLEV" --admin sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'
 ------------------------------------------
-BF0F95593FA231D91539DE9ED0994D60555CE0A68D7E66FC958F501C0ACF56BE
+CAE4751E2013C1AE8A7151D37DCE6E3DDC728EAADADF2671495D86AE60B7AC92
 *************END*************************
 **************BEGIN**********************
-seid query tx BF0F95593FA231D91539DE9ED0994D60555CE0A68D7E66FC958F501C0ACF56BE --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --output json | jq -r '.logs[0].events[0].attributes[0].value'
+seid query tx CAE4751E2013C1AE8A7151D37DCE6E3DDC728EAADADF2671495D86AE60B7AC92 --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --output json | jq -r '.logs[0].events[0].attributes[0].value'
 ------------------------------------------
-sei1hse0m60gkw04uzf7w2e6xkzvgwn965k07ux3e6aru8mpdpdy225qyd5v55
+sei19aa5yk7kfw47ms8sf3m6ccag4czaqrx0vgmdv9wy7mfymrz32dvqaj4sx8
 *************END*************************

@@ -117,7 +117,7 @@ Upload() {
     CATEGORY=$1
     echo "================================================="
     echo "Upload Wasm for $CATEGORY"
-    Execute "seid tx wasm store release/$CATEGORY".wasm" $WALLET $NODECHAIN --gas=2500000 --fees=2500000usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'"
+    Execute "seid tx wasm store release/$CATEGORY".wasm" $WALLET $NODECHAIN --gas=3000000 --fees=3000000usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'"
     UPLOADTX=$RETURN
 
     echo "Upload txHash: "$UPLOADTX
@@ -128,7 +128,7 @@ Upload() {
     while [[ $CODE_ID == "" ]]
     do 
         sleep 3
-        Execute "seid query tx $UPLOADTX $NODECHAIN --output json | jq -r '.logs[0].events[-1].attributes[1].value'"
+        Execute "seid query tx $UPLOADTX $NODECHAIN --output json | jq -r '.logs[0].events[-1].attributes[-1].value'"
         CODE_ID=$RETURN
     done
 
@@ -160,6 +160,61 @@ InstantiateTier() {
     echo "Contract Address: " $CONTRACT_ADDR
     echo $CONTRACT_ADDR > data/contract_$CATEGORY
 }
+
+InstantiateIDO() {
+    CATEGORY='ido'
+    echo "================================================="
+    echo "Instantiate Contract "$CATEGORY
+    #read from FILE_CODE_ID
+    
+    CODE_ID=$(cat data/code_$CATEGORY)
+    TIER_CONTRACT=$(cat data/contract_tier)
+    NFT_CONTRACT="sei18fe3j73dpjc4a0jx0l83mve7wzshhd6lxqhk0hjl466m09xfmtcqtftyw9"
+
+    echo "Code id: " $CODE_ID
+    echo "Tier Contract: " $TIER_CONTRACT
+
+    Execute "seid tx wasm instantiate $CODE_ID '{\"tier_contract\":\"'$TIER_CONTRACT'\", \"nft_contract\":\"'$NFT_CONTRACT'\", \"lock_periods\":[1,2,3,4,5,6]}' --admin $ADDR_OWNER $WALLET $TXFLAG --label \"IDOContract\" --output json | jq -r '.txhash'"
+    TXHASH=$RETURN
+
+    echo "Transaction hash = $TXHASH"
+    CONTRACT_ADDR=""
+    while [[ $CONTRACT_ADDR == "" ]]
+    do
+        sleep 3
+        Execute "seid query tx $TXHASH $NODECHAIN --output json | jq -r '.logs[0].events[0].attributes[0].value'"
+        CONTRACT_ADDR=$RETURN
+    done
+    echo "Contract Address: " $CONTRACT_ADDR
+    echo $CONTRACT_ADDR > data/contract_$CATEGORY
+}
+
+
+InstantiateCW20() {
+    CATEGORY='cw20_base'
+    echo "================================================="
+    echo "Instantiate Contract "$CATEGORY
+    #read from FILE_CODE_ID
+    
+    CODE_ID=$(cat data/code_$CATEGORY)
+
+    echo "Code id: " $CODE_ID
+
+    Execute "seid tx wasm instantiate $CODE_ID '{\"name\":\"KAND\",\"symbol\":\"KAND\",\"decimals\":6,\"initial_balances\":[{\"address\":\"'$ADDR_OWNER'\",\"amount\":\"10000000000\"}],\"mint\":{\"minter\":\"'$ADDR_OWNER'\"},\"marketing\":{\"marketing\":\"'$ADDR_OWNER'\",\"logo\":{\"url\":\"\"}}}' --label \"HOLEV$CODE_CW20\" --admin $ADDR_OWNER $WALLET $TXFLAG --output json | jq -r '.txhash'"
+    TXHASH=$RETURN
+
+    echo "Transaction hash = $TXHASH"
+    CONTRACT_ADDR=""
+    while [[ $CONTRACT_ADDR == "" ]]
+    do
+        sleep 3
+        Execute "seid query tx $TXHASH $NODECHAIN --output json | jq -r '.logs[0].events[0].attributes[0].value'"
+        CONTRACT_ADDR=$RETURN
+    done
+    echo "Contract Address: " $CONTRACT_ADDR
+    echo $CONTRACT_ADDR > data/contract_$CATEGORY
+}
+
 
 
 #################################################################################
@@ -201,18 +256,18 @@ DeployTier() {
     InstantiateTier
 } 
 
-DeployCW20Stake() {
-    CATEGORY=cw20_stake
+DeployIDO() {
+    CATEGORY=ido
     RustBuild $CATEGORY
     Upload $CATEGORY
-    InstantiateStake
+    # InstantiateIDO
 } 
 
-DeployCW20TokenFactory() {
-    CATEGORY=cw20_token_factory
-    # RustBuild $CATEGORY
+DeployCw20base() {
+    CATEGORY=cw20_base
+    RustBuild $CATEGORY
     Upload $CATEGORY
-    InstantiateTokenFactory
+    InstantiateCW20
     
 } 
 
@@ -236,7 +291,12 @@ Optimize() {
 # RustBuild tier
 # Optimize tier
 # Upload tier
-InstantiateTier
+# InstantiateTier
 # DeployTier
+# RustBuild ido
+# Upload ido
+# DeployIDO
+# InstantiateIDO
 
-#CreateNewToken
+# DeployCw20base
+InstantiateCW20
