@@ -169,7 +169,7 @@ InstantiateIDO() {
     
     CODE_ID=$(cat data/code_$CATEGORY)
     TIER_CONTRACT=$(cat data/contract_tier)
-    NFT_CONTRACT="sei18fe3j73dpjc4a0jx0l83mve7wzshhd6lxqhk0hjl466m09xfmtcqtftyw9"
+    NFT_CONTRACT=$(cat data/contract_cw721_base)
 
     echo "Code id: " $CODE_ID
     echo "Tier Contract: " $TIER_CONTRACT
@@ -215,6 +215,30 @@ InstantiateCW20() {
     echo $CONTRACT_ADDR > data/contract_$CATEGORY
 }
 
+InstantiateCW721() {
+    CATEGORY='cw721_base'
+    echo "================================================="
+    echo "Instantiate Contract "$CATEGORY
+    #read from FILE_CODE_ID
+    
+    CODE_ID=$(cat data/code_$CATEGORY)
+
+    echo "Code id: " $CODE_ID
+
+    Execute "seid tx wasm instantiate $CODE_ID '{\"name\":\"KAND\",\"symbol\":\"KAND\",\"minter\":\"'$ADDR_OWNER'\"}' --label \"NFT-KAND\" --admin $ADDR_OWNER $WALLET $TXFLAG --output json | jq -r '.txhash'"
+    TXHASH=$RETURN
+
+    echo "Transaction hash = $TXHASH"
+    CONTRACT_ADDR=""
+    while [[ $CONTRACT_ADDR == "" ]]
+    do
+        sleep 3
+        Execute "seid query tx $TXHASH $NODECHAIN --output json | jq -r '.logs[0].events[0].attributes[0].value'"
+        CONTRACT_ADDR=$RETURN
+    done
+    echo "Contract Address: " $CONTRACT_ADDR
+    echo $CONTRACT_ADDR > data/contract_$CATEGORY
+}
 
 
 #################################################################################
@@ -260,7 +284,7 @@ DeployIDO() {
     CATEGORY=ido
     RustBuild $CATEGORY
     Upload $CATEGORY
-    # InstantiateIDO
+    InstantiateIDO
 } 
 
 DeployCw20base() {
@@ -268,6 +292,14 @@ DeployCw20base() {
     RustBuild $CATEGORY
     Upload $CATEGORY
     InstantiateCW20
+    
+} 
+
+DeployCw721base() {
+    CATEGORY=cw721_base
+    RustBuild $CATEGORY
+    Upload $CATEGORY
+    InstantiateCW721
     
 } 
 
@@ -295,8 +327,10 @@ Optimize() {
 # DeployTier
 # RustBuild ido
 # Upload ido
-# DeployIDO
+DeployIDO
 # InstantiateIDO
 
 # DeployCw20base
-InstantiateCW20
+# InstantiateCW20
+
+# DeployCw721base

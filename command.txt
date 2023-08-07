@@ -1,11 +1,46 @@
 
 **************BEGIN**********************
-seid tx wasm instantiate 2226 '{"name":"KAND","symbol":"KAND","decimals":6,"initial_balances":[{"address":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'","amount":"10000000000"}],"mint":{"minter":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'"},"marketing":{"marketing":"'sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat'","logo":{"url":""}}}' --label "HOLEV" --admin sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'
+cd ido
 ------------------------------------------
-CAE4751E2013C1AE8A7151D37DCE6E3DDC728EAADADF2671495D86AE60B7AC92
+
 *************END*************************
 **************BEGIN**********************
-seid query tx CAE4751E2013C1AE8A7151D37DCE6E3DDC728EAADADF2671495D86AE60B7AC92 --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --output json | jq -r '.logs[0].events[0].attributes[0].value'
+pwd
 ------------------------------------------
-sei19aa5yk7kfw47ms8sf3m6ccag4czaqrx0vgmdv9wy7mfymrz32dvqaj4sx8
+/root/Sei-IDO-Tier-Contract/ido
+*************END*************************
+**************BEGIN**********************
+RUSTFLAGS='-C link-arg=-s' cargo wasm
+------------------------------------------
+
+*************END*************************
+**************BEGIN**********************
+cp ./target/wasm32-unknown-unknown/release/ido.wasm ../release/
+------------------------------------------
+
+*************END*************************
+**************BEGIN**********************
+cd ..
+------------------------------------------
+
+*************END*************************
+**************BEGIN**********************
+seid tx wasm store release/ido.wasm --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas=3000000 --fees=3000000usei --broadcast-mode block --keyring-backend test -y --output json | jq -r '.txhash'
+------------------------------------------
+B313A96FBA2DED2E5F62BF5708EDA4FCA625AE23F2B4F4312E5BE90FF200E551
+*************END*************************
+**************BEGIN**********************
+seid query tx B313A96FBA2DED2E5F62BF5708EDA4FCA625AE23F2B4F4312E5BE90FF200E551 --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --output json | jq -r '.logs[0].events[-1].attributes[-1].value'
+------------------------------------------
+2239
+*************END*************************
+**************BEGIN**********************
+seid tx wasm instantiate 2239 '{"tier_contract":"'sei1hse0m60gkw04uzf7w2e6xkzvgwn965k07ux3e6aru8mpdpdy225qyd5v55'", "nft_contract":"'sei16ywc9472e0e5838cujqpnezhmcpdc0jw4wqjlgr9xes2h77ezfpqfq3dfl'", "lock_periods":[1,2,3,4,5,6]}' --admin sei1zwlmtugzr5wk5rxcmrchj2aeu8s8unktlqzmat --from lucas --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --gas=250000 --fees=250000usei --broadcast-mode block --keyring-backend test -y --label "IDOContract" --output json | jq -r '.txhash'
+------------------------------------------
+8916025C336B6625E61E4787DF1543DD704ECA8B024690C3047CFEBECB324B5D
+*************END*************************
+**************BEGIN**********************
+seid query tx 8916025C336B6625E61E4787DF1543DD704ECA8B024690C3047CFEBECB324B5D --node https://rpc.atlantic-2.seinetwork.io:443 --chain-id atlantic-2 --output json | jq -r '.logs[0].events[0].attributes[0].value'
+------------------------------------------
+sei1j3nzvu5gywy4wt2e3q5vf5k438m0wv5x6fw5fk593e76hkedut3q4umhe4
 *************END*************************
